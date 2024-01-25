@@ -30,7 +30,8 @@ struct BuildListParams: Content {
 
     var projectName: String?
 
-    var excludeCI: Bool = false
+    // DO-2659 remove until UI tool gets added
+    //var excludeCI: Bool = false
 
     var page: Int
 

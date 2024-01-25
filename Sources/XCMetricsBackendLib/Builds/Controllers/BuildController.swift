@@ -163,9 +163,13 @@ public struct BuildController: RouteCollection {
         let query = Build.query(on: req.db)
             .filter(\.$startTimestamp >= params.from)
             .filter(\.$startTimestamp <= params.to)
+        /* DO-2659 - remove until UI support is added
         if params.excludeCI {
             query.filter(\.$isCi == false)
         }
+        */
+        query.filter(\.$isCi == false)
+
         if let status = params.status {
             query.filter(\.$buildStatus == status)
         }
