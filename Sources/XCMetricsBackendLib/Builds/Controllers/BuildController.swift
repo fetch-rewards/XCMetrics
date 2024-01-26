@@ -326,8 +326,24 @@ public struct BuildController: RouteCollection {
         guard let buildId = req.parameters.get("id") else {
             throw Abort(.badRequest)
         }
+        // omitting `detail` field which makes the payload smaller and reduces duplicate data
         return BuildError.query(on: req.db)
                 .filter(\.$buildIdentifier == buildId)
+                .field(\.$characterRangeEnd)
+                .field(\.$documentURL)
+                .field(\.$endingColumn)
+                .field(\.$id)
+                .field(\.$parentIdentifier)
+                .field(\.$day)
+                .field(\.$type)
+                .field(\.$title)
+                .field(\.$endingLine)
+                .field(\.$startingLine)
+                .field(\.$parentType)
+                .field(\.$startingColumn)
+                .field(\.$buildIdentifier)
+                .field(\.$characterRangeStart)
+                .field(\.$severity)
                 .all()
     }
 
@@ -367,8 +383,25 @@ public struct BuildController: RouteCollection {
         guard let buildId = req.parameters.get("id") else {
             throw Abort(.badRequest)
         }
+        // omitting `detail` field which makes the payload smaller and reduces duplicate data
         return BuildWarning.query(on: req.db)
                 .filter(\.$buildIdentifier == buildId)
+                .field(\.$characterRangeEnd)
+                .field(\.$documentURL)
+                .field(\.$endingColumn)
+                .field(\.$id)
+                .field(\.$parentIdentifier)
+                .field(\.$day)
+                .field(\.$type)
+                .field(\.$title)
+                .field(\.$endingLine)
+                .field(\.$startingLine)
+                .field(\.$parentType)
+                .field(\.$clangFlag)
+                .field(\.$startingColumn)
+                .field(\.$buildIdentifier)
+                .field(\.$characterRangeStart)
+                .field(\.$severity)
                 .all()
     }
 

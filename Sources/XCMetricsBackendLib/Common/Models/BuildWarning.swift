@@ -72,7 +72,7 @@ public final class BuildWarning: Model, Content, PartitionedByDay {
     @Field(key: "character_range_end")
     var characterRangeEnd: Int32
 
-    @Field(key: "detail")
+    @OptionalField(key: "detail")
     var detail: String?
 
     @Field(key: "day")
