@@ -37,28 +37,17 @@ class HashedMacOSMachineNameReader: MachineNameReader {
         if encrypted {
             return Host.current().localizedName?.md5()
         }
-        return removeLocalizedSingleQuotesAndSpaces(Host.current().localizedName)
+        return removeLocalizedSingleQuotesAndSpaces(from: Host.current().localizedName)
     }
 
     func removeLocalizedSingleQuotesAndSpaces(from input: String) -> String {
-        print("testing this")
-        var sanitizedString = input
-
         // Define a set of localized variations of single quotes
         let localizedSingleQuotes: Set<Character> = [
-            "‘", "’", "`", "ʹ", "′", "‛", "❛", "❜", "＇"
+            "‘", "’", "`", "ʹ", "′", "‛", "❛", "❜", "＇", "'"
         ]
 
         // Iterate through each character in the input string
-        for char in input {
-            // Check if the character is a localized variation of a single quote or space
-            if localizedSingleQuotes.contains(char) || char.isWhitespace {
-                // Remove the localized variation from the string
-                sanitizedString.removeAll { $0 == char }
-            }
-        }
-
-        return sanitizedString
+        return input.filter { !localizedSingleQuotes.contains($0) && !$0.isWhitespace }
     }
 }
 
