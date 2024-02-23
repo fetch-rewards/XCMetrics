@@ -41,7 +41,7 @@ class HashedMacOSMachineNameReader: MachineNameReader {
     }
 
     private func normalizing(_ input: String) -> String {
-        let allowedChars = Set("abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLKMNOPQRSTUVWXYZ1234567890")
+        let allowedChars = Set("abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ1234567890")
         return String(input.filter { allowedChars.contains($0) })
     }
 }
