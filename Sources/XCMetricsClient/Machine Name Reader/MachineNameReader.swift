@@ -41,13 +41,8 @@ class HashedMacOSMachineNameReader: MachineNameReader {
     }
 
     func removeLocalizedSingleQuotesAndSpaces(from input: String) -> String {
-        // Define a set of localized variations of single quotes
-        let localizedSingleQuotes: Set<Character> = [
-            "‘", "’", "`", "ʹ", "′", "‛", "❛", "❜", "＇", "'"
-        ]
-
-        // Iterate through each character in the input string
-        return input.filter { !localizedSingleQuotes.contains($0) && !$0.isWhitespace }
+        let allowedChars = Set("abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLKMNOPQRSTUVWXYZ1234567890")
+        return String(inputString.filter { allowedChars.contains($0) })
     }
 }
 
