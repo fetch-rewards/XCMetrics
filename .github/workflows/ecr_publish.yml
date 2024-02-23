@@ -12,11 +12,25 @@ on:
         required: true
 
 jobs:
-  call-workflow-ecr-login-via-oidc:
-    uses: fetch-rewards/common-workflows/.github/workflows/ecr-login-via-oidc.yml@main
+  login-to-ecr:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Configure AWS creds via OIDC
+        uses: aws-actions/configure-aws-credentials@v2
+        with:
+          role-to-assume: arn:aws:iam::292095839402:role/oidc-github-actions-deployer
+          aws-region: us-east-1
+          mask-aws-account-id: 'false'
+      - name: Login to ECR Docker
+        id: login-ecr
+        uses: aws-actions/amazon-ecr-login@v1
+    outputs:
+      registry: ${{ steps.login-ecr.outputs.registry }}
+      docker_username: ${{ steps.login-ecr.outputs.docker_username_292095839402_dkr_ecr_us_east_1_amazonaws_com }}
+      docker_password: ${{ steps.login-ecr.outputs.docker_password_292095839402_dkr_ecr_us_east_1_amazonaws_com }}
   ecr-build:
     runs-on: ubuntu-latest # Corrected the spelling of 'ubuntu-latest'
-    needs: call-workflow-ecr-login-via-oidc
+    needs: login-to-ecr
     steps:
       - name: Set up QEMU
         uses: docker/setup-qemu-action@v1
@@ -27,7 +41,7 @@ jobs:
         uses: aws-actions/amazon-ecr-login@v1
       - name: Publish image
         env:
-          ECR_REGISTRY: ${{ needs.call-workflow-ecr-login-via-oidc.outputs.registry }}
+          ECR_REGISTRY: ${{ needs.login-to-ecr.outputs.registry }}
           ECR_REPOSITORY: fetchrewards/bark-api
           IMAGE_TAG: ${{ inputs.version }}
         run: |
