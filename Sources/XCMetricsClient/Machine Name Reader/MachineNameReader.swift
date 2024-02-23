@@ -37,12 +37,12 @@ class HashedMacOSMachineNameReader: MachineNameReader {
         if encrypted {
             return Host.current().localizedName?.md5()
         }
-        return removeLocalizedSingleQuotesAndSpaces(from: Host.current().localizedName)
+        return normalizing(Host.current().localizedName)
     }
 
-    func removeLocalizedSingleQuotesAndSpaces(from input: String) -> String {
+    private func normalizing(_ input: String) -> String {
         let allowedChars = Set("abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLKMNOPQRSTUVWXYZ1234567890")
-        return String(inputString.filter { allowedChars.contains($0) })
+        return String(input.filter { allowedChars.contains($0) })
     }
 }
 
