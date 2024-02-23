@@ -1,0 +1,39 @@
+name: Publish ecr
+
+permissions:
+  id-token: write # This is required for requesting the JWT
+  contents: write  # This is required for actions/checkout
+
+on:
+  workflow_dispatch:
+    inputs:
+      version:
+        description: Define the version for the image
+        required: true
+
+jobs:
+  call-workflow-ecr-login-via-oidc:
+    uses: fetch-rewards/common-workflows/.github/workflows/ecr-login-via-oidc.yml@main
+  ecr-build:
+    runs-on: ubuntu-latest # Corrected the spelling of 'ubuntu-latest'
+    needs: call-workflow-ecr-login-via-oidc
+    steps:
+      - name: Set up QEMU
+        uses: docker/setup-qemu-action@v1
+      - name: Set up Docker Buildx
+        uses: docker/setup-buildx-action@v1
+      - name: Login to Amazon ECR
+        id: login-ecr
+        uses: aws-actions/amazon-ecr-login@v1
+      - name: Publish image
+        env:
+          ECR_REGISTRY: ${{ needs.call-workflow-ecr-login-via-oidc.outputs.registry }}
+          ECR_REPOSITORY: fetchrewards/bark-api
+          IMAGE_TAG: ${{ inputs.version }}
+        run: |
+          aws ecr create-repository --repository-name $ECR_REPOSITORY || true
+          docker buildx build -t $ECR_REGISTRY/$ECR_REPOSITORY:$IMAGE_TAG --platform=linux/amd64 --build-arg GO_PROXY=$GOPROXY .
+          docker push $ECR_REGISTRY/$ECR_REPOSITORY:$IMAGE_TAG
+      - name: Logout of Amazon ECR
+        if: always()
+        run: docker logout ${{ steps.login-ecr.outputs.registry }}
