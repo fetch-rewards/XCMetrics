@@ -34,6 +34,9 @@ jobs:
           ECR_REPOSITORY: fetchrewards/xcmetrics-backend
           IMAGE_TAG: ${{ inputs.version }}
         run: |
+          echo $ECR_REGISTRY
+          echo $ECR_REPOSITORY
+          echo $IMAGE_TAG
           docker buildx build -t $ECR_REGISTRY/$ECR_REPOSITORY:$IMAGE_TAG --platform=linux/amd64 --build-arg GO_PROXY=$GOPROXY .
           docker push $ECR_REGISTRY/$ECR_REPOSITORY:$IMAGE_TAG
       - name: Logout of Amazon ECR
