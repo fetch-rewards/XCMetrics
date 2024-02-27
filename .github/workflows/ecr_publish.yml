@@ -12,9 +12,13 @@ on:
         required: true
 
 jobs:
-  login-to-ecr:
-    runs-on: ubuntu-latest
+  ecr-build:
+    runs-on: ubuntu-latest # Corrected the spelling of 'ubuntu-latest'
     steps:
+      - name: Set up QEMU
+        uses: docker/setup-qemu-action@v1
+      - name: Set up Docker Buildx
+        uses: docker/setup-buildx-action@v1
       - name: Configure AWS creds via OIDC
         uses: aws-actions/configure-aws-credentials@v2
         with:
@@ -24,24 +28,9 @@ jobs:
       - name: Login to ECR Docker
         id: login-ecr
         uses: aws-actions/amazon-ecr-login@v1
-    outputs:
-      registry: ${{ steps.login-ecr.outputs.registry }}
-      docker_username: ${{ steps.login-ecr.outputs.docker_username_292095839402_dkr_ecr_us_east_1_amazonaws_com }}
-      docker_password: ${{ steps.login-ecr.outputs.docker_password_292095839402_dkr_ecr_us_east_1_amazonaws_com }}
-  ecr-build:
-    runs-on: ubuntu-latest # Corrected the spelling of 'ubuntu-latest'
-    needs: login-to-ecr
-    steps:
-      - name: Set up QEMU
-        uses: docker/setup-qemu-action@v1
-      - name: Set up Docker Buildx
-        uses: docker/setup-buildx-action@v1
-      - name: Login to Amazon ECR
-        id: login-ecr
-        uses: aws-actions/amazon-ecr-login@v1
       - name: Publish image
         env:
-          ECR_REGISTRY: ${{ needs.login-to-ecr.outputs.registry }}
+          ECR_REGISTRY: ${{ steps.login-ecr.outputs.registry }}
           ECR_REPOSITORY: fetchrewards/bark-api
           IMAGE_TAG: ${{ inputs.version }}
         run: |
