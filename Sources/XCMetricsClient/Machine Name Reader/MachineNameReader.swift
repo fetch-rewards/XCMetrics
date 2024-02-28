@@ -37,32 +37,6 @@ class HashedMacOSMachineNameReader: MachineNameReader {
         if encrypted {
             return Host.current().localizedName?.md5()
         }
-        return normalizing(Host.current().localizedName)
-    }
-
-    private func normalizing(_ input: String) -> String {
-        let allowedChars = Set("abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ1234567890")
-        return String(input.filter { allowedChars.contains($0) })
+        return Host.current().localizedName
     }
 }
-
-
-// import XCTest
-
-// class StringSanitizationTests: XCTestCase {
-
-//     func testRemoveLocalizedSingleQuotesAndSpaces() {
-//         // Given
-//         let inputString = "This is a ‘string’ with ’localized’ variations of `single quotes’."
-        
-//         // When
-//         let sanitized = removeLocalizedSingleQuotesAndSpaces(from: inputString)
-        
-//         // Then
-//         XCTAssertEqual(sanitized, "Thisisastringwithlocalizedvariationsofsinglequotes.")
-//     }
-    
-// }
-
-// // Run the tests
-// StringSanitizationTests.defaultTestSuite.run()
