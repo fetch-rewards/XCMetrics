@@ -33,17 +33,26 @@ struct LogFileS3Repository: LogFileRepository {
         guard let region = Region(rawValue: regionName) else {
             preconditionFailure("Invalid S3 Region \(regionName)")
         }
-        self.s3 = S3(accessKeyId: accessKey, secretAccessKey: secretAccessKey, region: region)
+        self.s3 = S3(region: region)
     }
 
+    // init?(config: Configuration) {
+    //     guard let bucketName = config.s3Bucket, let accessKey = config.awsAccessKeyId,
+    //           let secretAccessKey = config.awsSecretAccessKey,
+    //           let regionName = config.s3Region else {
+    //         return nil
+    //     }
+    //     self.init(accessKey: accessKey, bucketName: bucketName,
+    //               regionName: regionName, secretAccessKey: secretAccessKey)
+    // }
+
     init?(config: Configuration) {
-        guard let bucketName = config.s3Bucket, let accessKey = config.awsAccessKeyId,
-              let secretAccessKey = config.awsSecretAccessKey,
+        guard let bucketName = config.s3Bucket,
               let regionName = config.s3Region else {
             return nil
         }
-        self.init(accessKey: accessKey, bucketName: bucketName,
-                  regionName: regionName, secretAccessKey: secretAccessKey)
+        self.init(accessKey: "", bucketName: bucketName,
+                  regionName: regionName, secretAccessKey: "")
     }
 
     func put(logFile: File) throws -> URL {
