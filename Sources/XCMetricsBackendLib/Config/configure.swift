@@ -117,8 +117,7 @@ public func configure(_ app: Application) throws {
     if config.scheduleStatisticsJobs && app.environment != .testing {
         app.queues
             .schedule(DailyStatisticsJob(repository: SQLStatisticsRepository(db: app.db)))
-            .daily()
-            .at(.midnight)
+            .hourly()
     }
 
     // register routes
